@@ -2,21 +2,35 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
                 checkout scm
             }
         }
-        stage('Build') {
+
+        stage('HTML Validation') {
             steps {
-                echo 'static website - no build required'
+                sh '''
+                echo "Running HTML validation..."
+                tidy -errors index.html
+                '''
             }
         }
-        stage('Test') {
+
+        stage('Build') {
             steps {
-                echo 'Basic validation passed'
+                echo 'Static website - no build required'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'HTML validation passed. Pipeline SUCCESS.'
+        }
+        failure {
+            echo 'HTML validation failed. Fix HTML errors.'
         }
     }
 }
